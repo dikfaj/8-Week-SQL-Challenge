@@ -194,4 +194,63 @@ GROUP BY 1,2;
 ![7](https://github.com/dikfaj/8-Week-SQL-Challenge/assets/39393133/dbaa86bb-e92a-47b3-ac3b-cc38d7baf10a)
 - Hanya ada dua customer yang melakukan pembelian sebelum menjadi member yaitu customer A dan B
 - Tepat sebelum menjadi member, Customer A membeli curry dan sushi sedangkan Customer B membeli sushi saja
+# 
+
+8. What is the total items and amount spent for each member before they became a member?
+
+```sql
+SELECT
+	s.customer_id,
+	COUNT(s.product_id) AS total_item,
+	SUM(m2.price) AS total_sales
+FROM sales s 
+JOIN members m ON s.customer_id = m.customer_id AND s.order_date < m.join_date
+JOIN menu m2 ON s.product_id = m2.product_id
+GROUP BY 1
+ORDER BY 1;
+```
+
+## Langkah-Langkah
+- Gunakan `JOIN` untuk menggabungkan tabel `sales` dan `member` berdasarkan `cutomer_id` dan `order_date < join_date` dan `JOIN` dengan tabel `menu`
+- Hitung total item dengan `COUNT` dan jumlahkan harga dengan `SUM`
+
+## Jawaban
+![8](https://github.com/dikfaj/8-Week-SQL-Challenge/assets/39393133/46ad6680-ee52-47b3-a615-047a6d975025)
+- Setelah menjadi member, Customer A membeli 2 item dengan total pembelian $25
+- Sedangkan Customer B membeli 3 item dengan total pembelian $40
+
+# 
+
+9.  If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
+with points as (
+```sql
+SELECT
+	product_id,
+	price,
+	CASE 
+		WHEN product_id = 1 THEN price * 20
+		ELSE price * 10 
+    END AS points	
+FROM menu
+)
+
+SELECT 
+	customer_id,
+	SUM(points) AS total_points
+FROM sales s
+JOIN points p ON s.product_id = p.product_id
+GROUP BY 1
+ORDER BY 1;
+```
+## Langkah-Langkah
+- Setiap $1 mendapatkan 10 point sedangkan sushi `product_id = 1` mendapatkan 2x point lebih banyak atau 20 point
+- Maka, dengan menggunakan klausa `CASE`, ketika `product_id = 1` makan `price` * 20 selain itu `price` * 10
+- jumlahkan dengan `SUM` untuk mengetahui total point dari masing-masing customer
+
+## Jawaban
+![9](https://github.com/dikfaj/8-Week-SQL-Challenge/assets/39393133/b7fcaad0-a098-4a0a-99e0-f4ba7a89a2b6)
+
+- Customer A mendapatkan 860 point
+- Customer B mendapatkan 940 point
+- Customer C mendapatkan 360 point
 
